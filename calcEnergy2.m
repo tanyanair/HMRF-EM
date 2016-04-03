@@ -2,7 +2,6 @@ function energy = calcEnergy2( labels, IMDIMS)
 
 imLabels = reshape( labels, IMDIMS );
 neighbourhoodMask = [ 0 1 0; 1 0 1; 0 1 0];
-% neighbourhoodMask = [ 1 1 1; 1 0 1; 1 1 1];
 
 labelmask = cell(1,2);
 energy = cell(1,2);

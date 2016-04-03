@@ -10,71 +10,32 @@
 segType = {'otsu', 'kmeans'}; segIdx = 1;
 
 %% Load brain
-imDir = 'C:\Users\Lakshmi\OneDrive\Documents\ecse 626\project\tanyaCode\disc1_OAS1_0001_MR1_processed\MPRAGE\T88_111';
+imDir = 'C:\Users\Lakshmi\OneDrive\Documents\medimage\oasis_cross-sectional_disc1\disc1\OAS1_0001_MR1\PROCESSED\MPRAGE\T88_111';
 hdr = [imDir '\OAS1_0001_MR1_mpr_n4_anon_111_t88_masked_gfc.hdr'];
 hdrInfo = analyze75info(hdr);
 I = double(analyze75read( hdrInfo ));
-% I_orig = double(X(:,:,100));
-brainMask = I; brainMask(find(I==0))=1;
+brainMask = I; brainMask(I==0)=1;
+
+imDir = 'C:\Users\Lakshmi\OneDrive\Documents\medimage\oasis_cross-sectional_disc1\disc1\OAS1_0001_MR1\FSL_SEG\';
+hdr = [imDir 'OAS1_0001_MR1_mpr_n4_anon_111_t88_masked_gfc_fseg.hdr'];
+hdrInfo = analyze75info(hdr);
+Igt = double(analyze75read( hdrInfo ));
 
 betascale = .055;
-% BETA = 1.25*[1e-3 .2 .1];     % weighting of the V2 potentials for Beijing World Park 8.JPG
-% BETA = betascale*[.5 .07 .07 .2];     % weighting of the V2 potentials
-
-% BETA = betascale*[.75 1.13 1.2 .75];     % weighting of the V2 potentials for Beijing World Park 8.JPG
-% BETA = betascale*[.8 1 1.1 .095];     % weighting of the V2 potentials for Beijing World Park 8.JPG
-BETA = [0 .9 1.05 1];     % weights for neighbourhood potentials
-ALPHA = [0 1.1 1 1];    % weights for unary potentials
-NCOMPONENTS = 4;
+% BETA = [0 .9 1.05 1];     % weights for neighbourhood potentials
+% ALPHA = [0 1.1 1 1];    % weights for unary potentials
+BETA = [1 1 1];     % weights for neighbourhood potentials
+ALPHA = [1 1 1];    % weights for unary potentials
+NCOMPONENTS = 3;
 MAXITER_EM = 100;
 MAXITER_ICM = 10;
 STOPPERCENT = .5;
-
-% BETA = [1 1];
-% ALPHA = 1.25*[1.5e-3 .2];
-
-%% Load toy image
-% MYIMG = 'Beijing World Park 8.JPG';
-% NCOMPONENTS = 2;
-% MAXITER_EM = 100;
-% MAXITER_ICM = 10;
-% STOPPERCENT = 5;
-% 
-% I = im2double(imread( MYIMG ));
-% I_orig = im2double(rgb2gray(imread(MYIMG)));
-% 
-% betascale = .065;
-% BETA = [.1 .1];     % weighting of the V2 potentials for Beijing World Park 8.JPG
-% ALPHA = 1.25*[1 1];
 %%
 IMDIMS = size(I);
 [I_initSeg, model] = getInitSeg( I, NCOMPONENTS, segType{segIdx}, brainMask );
 labels = I_initSeg;
 
-% [pxgn, labels, energy{t}] = runICM( I, labels, model, brainMask, NCOMPONENTS, MAXITER_ICM, IMDIMS, BETA, ALPHA );
-%%
-Umodel1 = cell(1,NCOMPONENTS);
-for class=1:NCOMPONENTS
-    Umodel1{class} = log(normpdf( I(:), model.mu(class), sqrt(model.sig(class))));
-    Umodel1{class} = Umodel1{class}';
-%     Umodel1{class} = normc(Umodel1{class}');
-end
-%%
-Usum = zeros(1,MAXITER_ICM);
-for iter=1:MAXITER_ICM
-    % calculate energies
-    U = cell(1, NCOMPONENTS);
-    Umodel2 = calcEnergy2(labels, IMDIMS);
-    Umodel2 = calcEnergy3D( labels, IMDIMS);
-    for class=1:NCOMPONENTS
-        U{class} = ALPHA(class)*Umodel1{class} + BETA(class)*(Umodel2);
-    end
-    [Umin, labels] = min(cell2mat(U),[],2);
-%     labels(find(brainMask==1))=1;
-    Usum(iter) = sum(Umin);
-end
-energy = sum(Umin);
-
+[pxgn, labels, energy] = runICM( I, labels, model, brainMask, NCOMPONENTS, MAXITER_ICM, IMDIMS, BETA, ALPHA );
 
 %%
 % IMDIMS = size(I_orig);

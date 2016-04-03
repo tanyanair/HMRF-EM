@@ -11,10 +11,7 @@ switch segType
         end
         seg = reshape(cell2mat(seg),size(img));
 end
-% 
-% brainMask = reshape(brainMask, [1 numel(brainMask)]);
-% seg(brainMask==1)=1;
-% 
+seg(brainMask==1)=0;
 
 mu = zeros( ncomponents,1 );
 sigma = zeros( ncomponents,1 );
