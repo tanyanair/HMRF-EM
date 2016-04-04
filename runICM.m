@@ -8,7 +8,7 @@ end
 
 Usum = zeros(1,MAXITER_ICM);
 for iter=1:MAXITER_ICM
-   fprintf( '     ICM Iteration: %i\n', iter);
+%    fprintf( '     ICM Iteration: %i\n', iter);
     % calculate energies
     U = cell(1, NCOMPONENTS);
     Umodel2 = calcEnergy3D(labels, brainMask, IMDIMS, NCOMPONENTS);
