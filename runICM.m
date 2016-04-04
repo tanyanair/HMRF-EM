@@ -1,11 +1,9 @@
-function [pxgn, labels, energy] = runICM( I_orig, labels, model, brainMask, NCOMPONENTS, MAXITER_ICM, IMDIMS, BETA, ALPHA )
-
-brainMask = reshape(brainMask, [1 numel(brainMask)]);
+function [pxgn, labels, energy] = runICM( I, labels, model, brainMask, NCOMPONENTS, MAXITER_ICM, IMDIMS, BETA, ALPHA )
 
 % calculate the likelihood for the data with the updated model parameters
 Umodel1 = cell(1,NCOMPONENTS);
 for class=1:NCOMPONENTS
-    Umodel1{class} = log(normpdf( I_orig(:), model.mu(class), sqrt(model.sig(class))));
+    Umodel1{class} = log(normpdf( I(:), model.mu(class), sqrt(model.sig(class))));
 end
 
 Usum = zeros(1,MAXITER_ICM);
@@ -26,7 +24,8 @@ energy = sum(Umin);
 % P( x_i=label | neighbourhood of x_i )
 pxgn = cell(1,NCOMPONENTS);
 for class = 1:NCOMPONENTS
-   pxgn{class} = normc((exp(U{class})));
+%    pxgn{class} = normc((exp(U{class})));
+    pxgn{class} = normr(U{class});
 end
 
 % figure;

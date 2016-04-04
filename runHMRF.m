@@ -19,9 +19,10 @@ for t=1:MAXITER_EM
     [model, logli_img] = maximization_step( I_orig, pxgn, model, NCOMPONENTS);
    
     percent_diff = -100*mean(( (logli_img - logli_prev)./(logli_prev) ));
-    fprintf( 'EM Iter %i complete, Logli %.1f, Change Logli %.2f%%\n', t, sum(logli_img), percent_diff);
+%     fprintf( 'EM Iter %i complete, Logli %.1f, Change Logli %.2f%%\n', t, sum(logli_img), percent_diff);
+    fprintf( 'EM Iter %i complete, Change Logli %.2f%%\n', t, percent_diff);
 end
-final_seg = labels;
+final_seg = reshape(labels,IMDIMS);
 
 % plot the energy over all the ICM iterations across all the EM iterations
 energy = cell2mat(energy);

@@ -27,35 +27,27 @@ betascale = .055;
 BETA = [1 1 1];     % weights for neighbourhood potentials
 ALPHA = [1 1 1];    % weights for unary potentials
 NCOMPONENTS = 3;
-MAXITER_EM = 100;
-MAXITER_ICM = 10;
+MAXITER_EM = 5;
+MAXITER_ICM = 5;
 STOPPERCENT = .5;
 %%
 IMDIMS = size(I);
-[I_initSeg, model] = getInitSeg( I, NCOMPONENTS, segType{segIdx}, brainMask );
-labels = I_initSeg;
+% the model contains the mu & sig
+[I_initSeg, model] = getInitSeg( I, NCOMPONENTS, segType{segIdx}, brainMask);
 
-[pxgn, labels, energy] = runICM( I, labels, model, brainMask, NCOMPONENTS, MAXITER_ICM, IMDIMS, BETA, ALPHA );
+[I_finalSeg, model, energy, emIter] = runHMRF( I, I_initSeg, model, brainMask, NCOMPONENTS, ...
+                                MAXITER_EM, MAXITER_ICM, IMDIMS, BETA, ALPHA, STOPPERCENT);
 
-%%
-% IMDIMS = size(I_orig);
-% I_orig = reshape(I_orig, [1 numel(I_orig)]);
-% % the model contains the mu & sig
-% [I_initSeg, model] = getInitSeg( I_orig, NCOMPONENTS, segType{segIdx}, brainMask);
-% 
-% [I_finalSeg, model, energy, emIter] = runHMRF( I_orig, I_initSeg, model, brainMask, NCOMPONENTS, ...
-%                                 MAXITER_EM, MAXITER_ICM, IMDIMS, BETA, ALPHA, STOPPERCENT);
-% 
 % I_finalSeg(brainMask==1)=1;
 %% display results
 figure;
-subplot(131); imagesc( reshape(I_orig, IMDIMS) ); title( 'original' );
-subplot(132); imagesc( reshape(I_initSeg, IMDIMS) ); title( sprintf('initial seg: %s', segType{segIdx}) );
-subplot(133); imagesc( reshape(I_finalSeg, IMDIMS) ); title( ...
-                sprintf( 'final seg, %i EM, %i ICM, %.3f beta ', MAXITER_EM, MAXITER_ICM, betascale )); 
+subplot(131); imagesc( Igt(:,:,100) ); title( 'ground truth' );
+subplot(132); imagesc( I(:,:,100) ); title( 'initial seg' );
+subplot(133); imagesc( I_finalSeg(:,:,100) ); title( 'final seg' );
+% title( sprintf( 'final seg, %i EM, %i ICM, %.3f beta ', MAXITER_EM, MAXITER_ICM, betascale )); 
            
-% figure;
-% subplot(121); plot(energy); title( 'Energy vs. EM Iteration' ); hold on; plot( energy, 'ro');
-% subplot(122); imagesc( reshape(I_finalSeg, IMDIMS) ); title( ...
-%                 sprintf( 'final seg, %i EM, %i ICM, %.3f beta ', emIter, MAXITER_ICM, betascale ));
+figure;
+subplot(121); plot(energy); title( 'Energy vs. EM Iteration' ); hold on; plot( energy, 'ro');
+subplot(122); imagesc( I_finalSeg(:,:,100) ); title( 'final seg' );
+% title( sprintf( 'final seg, %i EM, %i ICM, %.3f beta ', emIter, MAXITER_ICM, betascale ));
 
