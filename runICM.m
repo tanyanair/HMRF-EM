@@ -11,11 +11,12 @@ for iter=1:MAXITER_ICM
 %    fprintf( '     ICM Iteration: %i\n', iter);
     % calculate energies
     U = cell(1, NCOMPONENTS);
-    Umodel2 = calcEnergy3D(labels, brainMask, IMDIMS, NCOMPONENTS);
+    Umodel2 = calcEnergy3D(labels, brainMask, IMDIMS, NCOMPONENTS, BETA);
     for class=1:NCOMPONENTS
-        U{class} = ALPHA(class)*Umodel1{class} + BETA(class)*(Umodel2);
+%         U{class} = ALPHA(class)*Umodel1{class} + BETA(class)*(Umodel2);
+        U{class} = ALPHA(class)*Umodel1{class} + (Umodel2);
     end
-    [Umin, labels] = min(cell2mat(U),[],2);
+    [Umin, labels] = max(cell2mat(U),[],2);
     labels(brainMask==1)=0;
     Usum(iter) = sum(Umin);
 end
@@ -25,7 +26,9 @@ energy = sum(Umin);
 pxgn = cell(1,NCOMPONENTS);
 for class = 1:NCOMPONENTS
 %    pxgn{class} = normc((exp(U{class})));
-    pxgn{class} = normr(U{class});
+%     pxgn{class} = normr(U{class});
+    pxgn{class} = (U{class});
+    
 end
 
 % figure;

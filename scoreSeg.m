@@ -1,4 +1,4 @@
-function scores = scoreSeg( Igt, Iseg, NCOMPONENTS)
+function scores = scoreSeg( Igt, Iseg, NCOMPONENTS, IMDIMS)
 
 %% similarity metric: percentage of correct classifications (not including background)
 ncorrect = zeros(1,NCOMPONENTS+1); 
@@ -26,5 +26,5 @@ for k=0:NCOMPONENTS
    dice(k+1) = ncorrect(k+1)*2 / (nnz(labelmaskSeg) + nnz(labelmaskGT));   
 end
 %% print these results
-scores = [[0 ALPHA]' [0 BETA]' dice' sensitivity' specificity'];
+scores = [dice' sensitivity' specificity'];
 % disp(res);

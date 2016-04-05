@@ -10,7 +10,7 @@ for k=1:NCOMPONENTS
    p_y = p_y + gauss{k};
 end
 for k=1:NCOMPONENTS
-  plgy{k} = (pxgn{k} + gauss{k} - p_y);
+  plgy{k} = exp(-(pxgn{k} + gauss{k} - p_y));
 end
 
 % update model parameters
