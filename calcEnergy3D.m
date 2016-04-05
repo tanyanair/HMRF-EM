@@ -13,8 +13,9 @@ for i=1:NCOMPONENTS
    labelmask{i} = zeros(IMDIMS);
    labelmask{i}(imLabels==i) = 1;
    energy{i} = convn(imLabels.*labelmask{i}/i, neighbourhoodMask, 'same' );
-   energy{i} = energy{i}(:);
+   energy{i} = -energy{i}(:);
    energy{i}(brainMask==1)=0;
 end
-energy = -sum(cell2mat(energy),2);
+% energy = -energy;
+% energy = -sum(cell2mat(energy),2);
 
