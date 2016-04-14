@@ -24,14 +24,12 @@ energy = sum(Umin);
 % P( x_i=label | neighbourhood of x_i )
 pxgn = cell(1,NCOMPONENTS);
 for class = 1:NCOMPONENTS
-   pxgn{class} = normr((exp(-U{class})));
-%     pxgn{class} = (U{class});
-%     pxgn{class} = exp(-U{class});
-%     pxgn{class} = pxgn{class}/sum(pxgn{class});
+%    pxgn{class} = normc((exp(U{class})));
+%     pxgn{class} = normr(U{class});
+    pxgn{class} = (U{class});
     
 end
 
 % figure;
-% plot(Usum); title( 'Energy Sum per ICM Iteration' );
-% xlabel( 'ICM Iteration' ); ylabel( 'Sum of U' );
+% plot(Usum); 
 % drawnow;

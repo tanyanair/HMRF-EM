@@ -3,7 +3,15 @@ function [seg, model] = getInitSeg( img, ncomponents, segType, brainMask)
 % should do otsu thresholding here, for now just use kmeans
 switch segType
     case 'kmeans'
-        seg = kmeans(img',ncomponents);
+%         seg = kmeans(img',ncomponents);
+        seg = cell(1,size(img,3));
+        for i=1:size(img,3)
+            x = img(:,:,i);
+            seg{i} = kmeans(x(:), ncomponents);
+            seg{i} = reshape(seg{i},[208,176]);
+        end
+        seg = reshape(cell2mat(seg),size(img));
+
     case 'otsu'
         seg = cell(1,size(img,3));
         for i=1:size(img,3)
