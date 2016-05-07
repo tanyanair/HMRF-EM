@@ -1,6 +1,13 @@
+%% runICM obtains MRF-MAP labels for the image by minimizing the posterior 
+%   energy of the image labels.
+%
+% Author: Tanya Nair
+% Last Modified: May 7, 2016
+
 function [pxgn, labels, energy] = runICM( I, labels, model, brainMask, NCOMPONENTS, MAXITER_ICM, IMDIMS, BETA, ALPHA )
 
 % calculate the likelihood for the data with the updated model parameters
+% (this is prior)
 Umodel1 = cell(1,NCOMPONENTS);
 for class=1:NCOMPONENTS
     Umodel1{class} = -log(normpdf( I(:), model.mu(class), sqrt(model.sig(class))));
@@ -25,10 +32,6 @@ energy = sum(Umin);
 pxgn = cell(1,NCOMPONENTS);
 for class = 1:NCOMPONENTS
    pxgn{class} = normr((exp(-U{class})));
-%     pxgn{class} = (U{class});
-%     pxgn{class} = exp(-U{class});
-%     pxgn{class} = pxgn{class}/sum(pxgn{class});
-    
 end
 
 % figure;

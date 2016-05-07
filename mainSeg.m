@@ -1,11 +1,10 @@
 %% mainSeg
 %  This file is the main executable that reads in a specified  image and
-%  then performs HRMF-EM segmentation as described in Zhang et al. (2004)
-
+%  then performs HRMF-EM segmentation as described in Zhang et al. (2001)
+%
 %   Author: Tanya Nair
-%   Last Modified: March 23, 2016
+%   Last Modified: May 7, 2016
 
-%% Constants
 close all; clear all;
 
 %% Load brain
@@ -22,72 +21,28 @@ Igt = double(analyze75read( hdrInfo ));
 NCOMPONENTS = 3;
 MAXITER_EM = 10;
 MAXITER_ICM = 10;
-STOPPERCENT = .5;
 IMDIMS = size(I);
 
 %%
-% BETA = [2 .66];     % weights for neighbourhood potentials
-% ALPHA = [0.35 .999 1.32];    % weights for unary potentials
-% [I_initSeg, model] = getInitSeg( I, NCOMPONENTS, segType{segIdx}, brainMask);
-% [I_finalSeg, model, energy, emIter] = runHMRF( I, I_initSeg, model, brainMask, NCOMPONENTS, ...
-%                                  MAXITER_EM, MAXITER_ICM, IMDIMS, BETA, ALPHA, STOPPERCENT);
-% 
-% score = [[0 ALPHA]' [0 BETA 0]' scoreSeg(Igt, I_finalSeg, NCOMPONENTS, IMDIMS)];
-% disp(score);
-% 
-% % display results
-% figure;
-% subplot(131); imagesc( Igt(:,:,100) ); title( 'ground truth' );
-% subplot(132); imagesc( I(:,:,100) ); title( 'initial seg' );
-% subplot(133); imagesc( I_finalSeg(:,:,100) ); title( sprintf('%.3f %.3f', ALPHA, BETA) ); 
-% 
+BETA = [2 .66];     % weights for neighbourhood potentials
+segType = 'otsu';
+% segType = 'kmeans';
+% ALPHA = [0.48 1.1 1.32];    % weights for unary potentials
+ALPHA = [0.5 .999 1.32];
+[I_initSeg, model] = getInitSeg( I, NCOMPONENTS, segType, brainMask);
+[I_finalSeg, model, energy, emIter] = runHMRF( I, I_initSeg, model, brainMask, NCOMPONENTS, ...
+                                 MAXITER_EM, MAXITER_ICM, IMDIMS, BETA, ALPHA);
+
+score = [[0 ALPHA]' [0 BETA 0]' scoreSeg(Igt, I_finalSeg, NCOMPONENTS, IMDIMS)];
+disp(score);
+
+%% display results
+figure;
+slice = 83;
+subplot(131); imagesc( Igt(:,:,slice) ); title( 'Ground Truth' );
+subplot(132); imagesc( I_initSeg(:,:,slice) ); title( sprintf('Initial Segmentation: %s', segType) );
+subplot(133); imagesc( I_finalSeg(:,:,slice) ); title( 'Final Segmentation' ); 
+
 % figure;
 % subplot(121); plot(energy(1:end-1)); title( 'Energy vs. EM Iteration' ); hold on; plot( energy(1:end-1), 'ro');
 % subplot(122); imagesc( I_finalSeg(:,:,100) ); title( 'final seg' );
-
-%%
-% segType = 'otsu';
-% BETA = [2 .66];     % weights for neighbourhood potentials
-% ALPHA = [0.5 .999 1.32];    % weights for unary potentials
-
-segType = 'kmeans';
-BETA = [2 .66];     % weights for neighbourhood potentials
-ALPHA = [0.5 .999 1.32];    % weights for unary potentials
-
-% the model contains the mu & sig
-[I_initSeg, model] = getInitSeg( I, NCOMPONENTS, segType, brainMask);
-labels=I_initSeg;
-%%
-for iter=1:2
-    
-    [pxgn, labels, energy] = runICM( I, labels, model, brainMask, NCOMPONENTS, MAXITER_ICM, IMDIMS, BETA, ALPHA );
-    [model, logli_img] = maximization_step( I, pxgn, model, NCOMPONENTS);
-
-    I_finalSeg = reshape(labels,IMDIMS);
-    score = [[0 ALPHA]' [0 BETA 0]' scoreSeg(Igt, I_finalSeg, NCOMPONENTS, IMDIMS)];
-    fprintf('iter %i\n', iter); disp(score);
-end
-%% display results
-figure;
-subplot(131); imagesc( Igt(:,:,81) ); title( 'ground truth' );
-subplot(132); imagesc( I_initSeg(:,:,81) ); title( sprintf('init seg: %s', segType) );
-subplot(133); imagesc( I_finalSeg(:,:,81) ); title( sprintf('%.3f %.2', ALPHA, BETA) ); 
-%
-% figure; imagesc( I(:,:,90)); title( 'Original T1 MR0001 Slice 90' ); colormap jet
-% figure; imagesc( Igt(:,:,90)); title( 'Ground Truth' ); colormap jet
-%%
-% i=1;
-% for a=1:0.01:1.1
-%    for b=1:0.01:1.1
-%        for c=1:0.01:1.1
-%             BETA = [c b a];     % weights for neighbourhood potentials
-%             [I_finalSeg, model, energy, emIter] = runHMRF( I, I_initSeg, model, brainMask, NCOMPONENTS, ...
-%                                 MAXITER_EM, MAXITER_ICM, IMDIMS, BETA, ALPHA, STOPPERCENT);
-%             score = [[0 ALPHA]' [0 BETA]' scoreSeg(Igt, I_finalSeg, NCOMPONENTS, IMDIMS)];
-%             disp(score);
-%             res{i} = score;
-%             i=i+1;
-%        end
-%    end
-% end
-

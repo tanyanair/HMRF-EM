@@ -1,3 +1,9 @@
+% maximization_step performs maximum likelihood calculations for each 
+%   class. This is the "M" step in EM.
+%
+% Author: Tanya Nair
+% Last Modified: May 7, 2016
+
 function [model, logli_img] = maximization_step( img, pxgn, model, NCOMPONENTS )
 
 img = img(:);
@@ -6,15 +12,11 @@ gauss = cell( 1,NCOMPONENTS );
 plgy = cell( 1, NCOMPONENTS );
 p_y = 0;
 for k=1:NCOMPONENTS
-%    gauss{k} = -log(normpdf( img, model.mu(k), sqrt(model.sig(k)) ));
    gauss{k} = (normpdf( img, model.mu(k), sqrt(model.sig(k)) ));
    p_y = p_y + gauss{k};
 end
 for k=1:NCOMPONENTS
   plgy{k} = ((pxgn{k}.*gauss{k}/sum(p_y)));
-%   plgy{k} = ((normr(exp(-pxgn{k})).*gauss{k}./p_y));
-%   plgy{k} = exp((pxgn{k} + gauss{k} - p_y));
-%   plgy{k} = (pxgn{k} + gauss{k} - p_y);
 end
 
 % update model parameters

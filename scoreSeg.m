@@ -1,6 +1,13 @@
+% scoreSeg calculates DICE, sensitivity, and specificity scores for a given
+%   labeling of the image. Igt is the ground truth, Iseg is the
+%   segmentation
+%
+%   Author: Tanya Nair
+%   Last Modified: May 7, 2016
+
 function scores = scoreSeg( Igt, Iseg, NCOMPONENTS, IMDIMS)
 
-%% similarity metric: percentage of correct classifications (not including background)
+% similarity metric: percentage of correct classifications (not including background)
 ncorrect = zeros(1,NCOMPONENTS+1); 
 dice = zeros(1,NCOMPONENTS+1);
 sensitivity = zeros(1,NCOMPONENTS+1);
@@ -25,6 +32,6 @@ for k=0:NCOMPONENTS
    % dice score
    dice(k+1) = ncorrect(k+1)*2 / (nnz(labelmaskSeg) + nnz(labelmaskGT));   
 end
-%% print these results
 scores = [dice' sensitivity' specificity'];
+% print results
 % disp(res);

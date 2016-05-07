@@ -1,17 +1,20 @@
+%% getInitSeg returns an initial segmentation of IMG into NCOMPONENTS 
+%   using the SEGTYPE specified.  The SEGTYPE must be either otsu or
+%   kmeans. The function also returns the mean, variance, and inverse
+%   frequency for each component.
+%
+% Author: Tanya Nair
+% Last Modified: May 7, 2016
+
 function [seg, model] = getInitSeg( img, ncomponents, segType, brainMask)
 
-% should do otsu thresholding here, for now just use kmeans
 switch segType
     case 'kmeans'
-%         seg = kmeans(img',ncomponents);
-        seg = cell(1,size(img,3));
-        for i=1:size(img,3)
-            x = img(:,:,i);
-            seg{i} = kmeans(x(:), ncomponents);
-            seg{i} = reshape(seg{i},[208,176]);
-        end
-        seg = reshape(cell2mat(seg),size(img));
-
+        % Approximate initial means are used to ensure consistent labeling
+        % of the segmentation. These values are rounded off from the means
+        % obtained through Otsu thresholding.
+        seg = kmeans(img(:), ncomponents, 'start', [300; 700; 1000] );
+        seg = reshape(seg,size(img));
     case 'otsu'
         seg = cell(1,size(img,3));
         for i=1:size(img,3)
