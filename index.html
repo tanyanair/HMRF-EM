@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>HMRF-EM by tanyanair</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">HMRF-EM</h1>
+      <h2 class="project-tagline">A MATLAB implementation of a Hidden Markov Random Field Model (HMRF) optimized with Expectation Maximization used to segment 3D MR images from the OASIS-brains dataset. </h2>
+      <a href="https://github.com/tanyanair/HMRF-EM" class="btn">View on GitHub</a>
+      <a href="https://github.com/tanyanair/HMRF-EM/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/tanyanair/HMRF-EM/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h2>
+<a id="segmentation-of-3d-images-using-the-hidden-markov-random-field-model-hmrf-and-expectation-maximization-algorithm-em" class="anchor" href="#segmentation-of-3d-images-using-the-hidden-markov-random-field-model-hmrf-and-expectation-maximization-algorithm-em" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Segmentation of 3D images using the Hidden Markov Random Field Model (HMRF) and Expectation-Maximization Algorithm (EM)</h2>
+
+<p>A MATLAB implementation of the HMRF as described in "Segmentation of Brain MR Images Through a Hidden Markov Random Field Model and the Expectation-Maximization Algorithm" [8]. The HMRF is applied to segment images from the cross-sectional OASIS-brains dataset but the code provided can be modified for any 3D image segmentation.</p>
+
+<p>In the next couple of sections, I'll introduce the problem of tissue segmentation and classification in medical imaging, desribe the high level segmentation pipeline, mathematical modelling of the HMRF, the optimization through EM, as well as an implementation of the model applied to white matter, grey matter, and cerebrospinal fluid (CSF). If you're not interested in this long discussion and are looking for a quick read about the HMRF model, what my code does, and what can use this code for, skip to the end of this page to "The HMRF 101" section.</p>
+
+<h2>
+<a id="the-hmrf-101" class="anchor" href="#the-hmrf-101" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The HMRF 101</h2>
+
+<h3>
+<a id="what-is-a-mrf-and-why-would-i-need-one" class="anchor" href="#what-is-a-mrf-and-why-would-i-need-one" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>What is a MRF and why would I need one?</h3>
+
+<p>Great question! Before we talk about HMRF's, we need to take a few steps back and talk about Markov Random Fields (MRF's). MRFs are a powerful statistical tool that are exploited in image segmentation applications to provide spatial context into generative models. Work prior to Zhang et al. in 2001 used MRFs as priors in finite mixture models that model tissue intensities (ie. GMM's) or in non-parametric models (ie. Parzen Windows). However, the simplifications made in these models come from mathematical convenience, as opposed to a statistical foundation. Using a HMRF to explicitly model the tissue intensities avoids these assumptions since the spatial relationships are built into the model. The paper ([8]) is a landmark in the field of brain tissue segmentation, but the model can be extended across any domain where capturing local spatial relationships is important to the segmentation task.</p>
+
+<h3>
+<a id="what-can-i-test-this-algorithm-on" class="anchor" href="#what-can-i-test-this-algorithm-on" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>What can I test this algorithm on?</h3>
+
+<p>Short answer - any 3D image. I validated the model using the OASIS- Cross-sectional dataset. This dataset consists of 416 normal and early onset Alzheimer Disease subjects from ages 18-96. Ground truth labels are provided in the dataset - which come from the FAST-FSL implementation of the HMRF described in the paper. This </p>
+
+<h3>
+<a id="what-does-my-code-do" class="anchor" href="#what-does-my-code-do" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>What does my code do?</h3>
+
+<ol>
+<li>Obtain an initial estimate of the HMRF parameters from an initial segmentation (Otsu or Kmeans).</li>
+<li>Calculate likelihood distribution of the intensity data given the bias field and the initial tissue classification.</li>
+<li>Obtain tissue class estimates using MRF-MAP criteria (using the ICM algorithm).</li>
+<li>Calculate the conditional probability distribution of each class given the intensity values of that class.</li>
+<li>Update the HMRF parameters for each class.</li>
+<li>Repeat steps 2-5 until convergence.</li>
+</ol>
+
+<h3>
+<a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+
+<p>Tanya Nair (<a href="https://github.com/tanyanair" class="user-mention">@tanyanair</a>)</p>
+
+<h3>
+<a id="references" class="anchor" href="#references" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>References</h3>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/tanyanair/HMRF-EM">HMRF-EM</a> is maintained by <a href="https://github.com/tanyanair">tanyanair</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
